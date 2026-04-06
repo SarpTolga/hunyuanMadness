@@ -229,7 +229,8 @@ def run_generation(job_id,img_path,quality,export_format,texture_mode,target_fac
                         [proj_cos**4, (proj_cos2**4)*0.3])
                     # Inpaint gaps
                     import numpy as np
-                    mask_np=(trust.squeeze(-1).cpu().numpy()*255>1).astype(np.uint8)*255
+                    trust_np=trust.squeeze(-1).cpu().numpy()
+                    mask_np=np.where(trust_np>1e-8,255,0).astype(np.uint8)
                     texture=paint_pipeline.texture_inpaint(texture,255-mask_np)
                     paint_pipeline.render.set_texture(texture)
                     mesh=paint_pipeline.render.save_mesh()
