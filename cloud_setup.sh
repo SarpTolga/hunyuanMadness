@@ -23,7 +23,7 @@ echo ""
 echo "[2/7] Installing Python dependencies..."
 pip install -r requirements.txt
 pip install -e .
-pip install flask trimesh pymeshlab pygltflib xatlas tiktoken
+pip install flask trimesh pymeshlab pygltflib xatlas tiktoken sentencepiece protobuf
 
 echo ""
 echo "[3/7] Installing system dependencies..."
