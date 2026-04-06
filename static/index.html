@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hunyuan3D Studio</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}.header{text-align:center;padding:30px 20px 10px}.header h1{font-size:1.8em;font-weight:700;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}.header p{color:#666;font-size:.9em}.gpu-badge{display:inline-block;margin-top:8px;padding:4px 12px;background:#1a1a2e;border:1px solid #2a2a3e;border-radius:20px;font-size:.75em;color:#888}.gpu-badge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#2ecc71;margin-right:6px;vertical-align:middle}.container{max-width:1100px;margin:0 auto;padding:20px;display:grid;grid-template-columns:380px 1fr;gap:24px}.panel{background:#12121a;border:1px solid #1e1e2e;border-radius:12px;padding:24px}.section-title{font-size:.75em;text-transform:uppercase;letter-spacing:1.5px;color:#555;margin-bottom:12px}.drop-zone{border:2px dashed #2a2a3e;border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:20px;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center}.drop-zone:hover{border-color:#6c5ce7;background:rgba(108,92,231,.05)}.drop-zone.has-image{padding:10px;border-style:solid;border-color:#2ecc71}.drop-zone .icon{font-size:2.5em;margin-bottom:10px;opacity:.4}.drop-zone .label{color:#666;font-size:.85em}.drop-zone .label span{color:#6c5ce7;text-decoration:underline;cursor:pointer}.drop-zone img{max-width:100%;max-height:160px;border-radius:6px}#imageInput{display:none}.quality-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}.quality-btn{padding:10px 8px;background:#1a1a2e;border:2px solid #2a2a3e;border-radius:8px;color:#aaa;cursor:pointer;text-align:center;transition:all .2s;font-size:.85em}.quality-btn:hover{border-color:#6c5ce7}.quality-btn.active{border-color:#6c5ce7;background:rgba(108,92,231,.15);color:#fff}.quality-btn .name{font-weight:600}.quality-btn .desc{font-size:.7em;color:#666;margin-top:2px}.format-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}.format-btn{padding:8px;background:#1a1a2e;border:2px solid #2a2a3e;border-radius:8px;color:#aaa;cursor:pointer;text-align:center;transition:all .2s;font-size:.85em;font-weight:600}.format-btn:hover{border-color:#6c5ce7}.format-btn.active{border-color:#6c5ce7;background:rgba(108,92,231,.15);color:#fff}.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#1a1a2e;border-radius:8px;margin-bottom:12px;cursor:pointer}.toggle-row label{font-size:.85em;cursor:pointer}.toggle-row .tag{font-size:.65em;padding:2px 8px;border-radius:10px;margin-left:8px}.switch{position:relative;width:44px;height:24px;pointer-events:none}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;inset:0;background:#2a2a3e;border-radius:24px;transition:.2s}.slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#666;border-radius:50%;transition:.2s}.switch input:checked+.slider{background:#6c5ce7}.switch input:checked+.slider:before{transform:translateX(20px);background:#fff}.range-row{padding:12px 16px;background:#1a1a2e;border-radius:8px;margin-bottom:20px}.range-row .range-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.range-row .range-label label{font-size:.85em}.range-row .range-label .value{font-size:.85em;color:#6c5ce7;font-weight:600}.range-row input[type=range]{width:100%;-webkit-appearance:none;background:#2a2a3e;height:4px;border-radius:4px;outline:none}.range-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#6c5ce7;cursor:pointer}.generate-btn{width:100%;padding:14px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s}.generate-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(108,92,231,.4)}.generate-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}.preview-panel{background:#12121a;border:1px solid #1e1e2e;border-radius:12px;display:flex;flex-direction:column;min-height:500px}.preview-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #1e1e2e}.preview-header h3{font-size:.9em;color:#888}.download-btn{padding:8px 20px;background:#2ecc71;border:none;border-radius:8px;color:#fff;font-weight:600;font-size:.85em;cursor:pointer;display:none}.download-btn:hover{background:#27ae60}.preview-body{flex:1;display:flex;align-items:center;justify-content:center}.preview-placeholder{text-align:center;color:#333}.preview-placeholder .icon{font-size:4em;margin-bottom:10px}.preview-placeholder p{font-size:.85em}model-viewer{width:100%;height:100%;min-height:460px;background:transparent}.status-bar{padding:14px 20px;border-top:1px solid #1e1e2e;font-size:.8em;display:none}.status-bar.visible{display:block}.status-text{color:#888}.status-text.loading{color:#f39c12}.status-text.success{color:#2ecc71}.status-text.error{color:#e74c3c}.stats-row{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}.stat{font-size:.85em;color:#555}.stat strong{color:#888}.progress-bar{width:100%;height:3px;background:#1a1a2e;border-radius:3px;margin-top:10px;overflow:hidden;display:none}.progress-bar.visible{display:block}.progress-bar .fill{height:100%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);border-radius:3px;animation:pi 1.5s ease-in-out infinite;width:30%}@keyframes pi{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}.error-box{margin-top:16px;padding:12px 16px;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);border-radius:8px;color:#e74c3c;font-size:.82em;display:none}.error-box.visible{display:block}@media(max-width:800px){.container{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Hunyuan3D Studio</h1>
+    <p>AI-powered image to 3D model generation</p>
+    <div class="gpu-badge" id="gpuBadge"><span class="dot"></span>Loading...</div>
+</div>
+<div class="container">
+    <div class="panel">
+        <div class="section-title">Input Image</div>
+        <div class="drop-zone" id="dropZone">
+            <div class="icon">+</div>
+            <div class="label">Drag & drop or <span id="browseLink">browse</span></div>
+        </div>
+        <input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp">
+        <div class="section-title">Quality</div>
+        <div class="quality-grid">
+            <div class="quality-btn" data-quality="fast"><div class="name">Fast</div><div class="desc">5 steps ~30s</div></div>
+            <div class="quality-btn active" data-quality="balanced"><div class="name">Balanced</div><div class="desc">15 steps ~1m</div></div>
+            <div class="quality-btn" data-quality="detailed"><div class="name">Detailed</div><div class="desc">30 steps ~2m</div></div>
+        </div>
+        <div class="section-title">Export Format</div>
+        <div class="format-grid">
+            <div class="format-btn active" data-format="glb">.GLB</div>
+            <div class="format-btn" data-format="obj">.OBJ</div>
+            <div class="format-btn" data-format="stl">.STL</div>
+            <div class="format-btn" data-format="fbx">.FBX</div>
+        </div>
+        <div class="toggle-row" id="textureRow">
+            <label>Generate Texture <span class="tag" id="textureTag">Loading...</span></label>
+            <div class="switch"><input type="checkbox" id="textureToggle"><span class="slider"></span></div>
+        </div>
+        <div class="range-row">
+            <div class="range-label">
+                <label>Max Faces (0 = no limit)</label>
+                <span class="value" id="facesValue">10,000</span>
+            </div>
+            <input type="range" id="facesSlider" min="0" max="50000" step="1000" value="10000">
+        </div>
+        <button class="generate-btn" id="generateBtn" disabled>Generate 3D Model</button>
+        <div class="error-box" id="errorBox"></div>
+    </div>
+    <div class="preview-panel">
+        <div class="preview-header"><h3>3D Preview</h3><button class="download-btn" id="downloadBtn">Download</button></div>
+        <div class="preview-body" id="previewBody">
+            <div class="preview-placeholder" id="placeholder"><div class="icon">&#x25F0;</div><p>Your 3D model will appear here</p></div>
+        </div>
+        <div class="status-bar" id="statusBar">
+            <div class="status-text" id="statusText"></div>
+            <div class="stats-row" id="statsRow"></div>
+            <div class="progress-bar" id="progressBar"><div class="fill"></div></div>
+        </div>
+    </div>
+</div>
+<script>
+let selectedFile=null,selectedQuality="balanced",selectedFormat="glb",isGenerating=false;
+const dropZone=document.getElementById("dropZone"),imageInput=document.getElementById("imageInput"),generateBtn=document.getElementById("generateBtn"),downloadBtn=document.getElementById("downloadBtn"),textureToggle=document.getElementById("textureToggle"),errorBox=document.getElementById("errorBox"),statusBar=document.getElementById("statusBar"),statusText=document.getElementById("statusText"),statsRow=document.getElementById("statsRow"),progressBar=document.getElementById("progressBar"),previewBody=document.getElementById("previewBody"),placeholder=document.getElementById("placeholder"),gpuBadge=document.getElementById("gpuBadge"),textureTag=document.getElementById("textureTag"),facesSlider=document.getElementById("facesSlider"),facesValue=document.getElementById("facesValue");
+
+function updateFacesLabel(){
+    const v=parseInt(facesSlider.value);
+    facesValue.textContent=v===0?"No limit":v.toLocaleString();
+}
+facesSlider.addEventListener("input",updateFacesLabel);
+updateFacesLabel();
+
+fetch("/api/status").then(r=>r.json()).then(d=>{
+    let badge=d.gpu+" ("+d.vram_gb+" GB)";
+    if(d.flashvdm)badge+=" + FlashVDM";
+    gpuBadge.innerHTML='<span class="dot" style="background:#2ecc71"></span>'+badge;
+    if(d.texture_ready){
+        textureTag.textContent="Available";
+        textureTag.style.background="rgba(46,204,113,.2)";
+        textureTag.style.color="#2ecc71";
+        textureToggle.checked=true;
+    }else{
+        textureTag.textContent="16GB+ VRAM needed";
+        textureTag.style.background="rgba(243,156,18,.2)";
+        textureTag.style.color="#f39c12";
+        textureToggle.checked=false;
+    }
+}).catch(()=>{
+    gpuBadge.innerHTML='<span class="dot" style="background:#e74c3c"></span>Server offline';
+    textureTag.textContent="Offline";
+    textureTag.style.background="rgba(231,76,60,.2)";
+    textureTag.style.color="#e74c3c";
+});
+
+dropZone.addEventListener("click",()=>imageInput.click());
+document.getElementById("browseLink").addEventListener("click",e=>{e.stopPropagation();imageInput.click()});
+dropZone.addEventListener("dragover",e=>{e.preventDefault();dropZone.style.borderColor="#6c5ce7"});
+dropZone.addEventListener("dragleave",()=>{dropZone.style.borderColor="#2a2a3e"});
+dropZone.addEventListener("drop",e=>{e.preventDefault();dropZone.style.borderColor="#2a2a3e";const f=e.dataTransfer.files[0];if(f&&f.type.startsWith("image/"))setImage(f)});
+imageInput.addEventListener("change",()=>{if(imageInput.files[0])setImage(imageInput.files[0])});
+
+function setImage(f){
+    selectedFile=f;
+    const r=new FileReader();
+    r.onload=e=>{dropZone.innerHTML='<img src="'+e.target.result+'">';dropZone.classList.add("has-image")};
+    r.readAsDataURL(f);
+    generateBtn.disabled=false;
+    errorBox.classList.remove("visible");
+}
+
+document.querySelectorAll(".quality-btn").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".quality-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedQuality=b.dataset.quality})});
+document.querySelectorAll(".format-btn").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".format-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedFormat=b.dataset.format})});
+document.getElementById("textureRow").addEventListener("click",()=>{textureToggle.checked=!textureToggle.checked});
+
+const STATUS_MESSAGES={
+    "queued":"Starting generation...",
+    "removing_bg":"Removing background...",
+    "generating_shape":"Generating 3D shape...",
+    "cleaning_mesh":"Cleaning mesh...",
+    "generating_texture":"Generating texture...",
+    "reducing_faces":"Reducing face count...",
+    "exporting":"Exporting model...",
+    "done":"Done!",
+    "error":"Generation failed"
+};
+const MAX_POLL_FAILURES=15;
+
+generateBtn.addEventListener("click",async()=>{
+    if(!selectedFile||isGenerating)return;
+    isGenerating=true;
+    generateBtn.disabled=true;
+    generateBtn.textContent="Generating...";
+    errorBox.classList.remove("visible");
+    statusBar.classList.add("visible");
+    statusText.textContent="Uploading image...";
+    statusText.className="status-text loading";
+    progressBar.classList.add("visible");
+    downloadBtn.style.display="none";
+    statsRow.innerHTML="";
+
+    const fd=new FormData();
+    fd.append("image",selectedFile);
+    fd.append("quality",selectedQuality);
+    fd.append("format",selectedFormat);
+    fd.append("texture",textureToggle.checked?"true":"false");
+    fd.append("faces",facesSlider.value);
+
+    try{
+        const r=await fetch("/api/generate",{method:"POST",body:fd});
+        const d=await r.json();
+        if(!r.ok)throw new Error(d.error||"Failed to start");
+        pollJob(d.job_id);
+    }catch(e){
+        showError(e.message);
+        resetBtn();
+    }
+});
+
+function pollJob(jobId){
+    let failures=0;
+    let startTime=Date.now();
+    const interval=setInterval(async()=>{
+        try{
+            const r=await fetch("/api/job/"+jobId);
+            if(!r.ok){failures++;checkFailures();return}
+            const d=await r.json();
+            failures=0;
+            let msg=STATUS_MESSAGES[d.status]||d.status;
+            let elapsed=Math.round((Date.now()-startTime)/1000);
+            msg+=" ("+formatTime(elapsed)+")";
+            if(d.stale){
+                msg+=" — Server may be stuck.";
+                statusText.className="status-text error";
+            }else{
+                statusText.className="status-text loading";
+            }
+            statusText.textContent=msg;
+            if(d.shape_time){
+                let s='<span class="stat"><strong>Shape:</strong> '+d.shape_time+'s</span>';
+                if(d.raw_faces)s+='<span class="stat"><strong>Raw:</strong> '+d.raw_faces.toLocaleString()+' faces</span>';
+                statsRow.innerHTML=s;
+            }
+            if(d.status==="done"){
+                clearInterval(interval);
+                progressBar.classList.remove("visible");
+                statusText.textContent="Done! ("+formatTime(elapsed)+")";
+                statusText.className="status-text success";
+                let s='<span class="stat"><strong>Faces:</strong> '+d.faces.toLocaleString()+'</span>';
+                s+='<span class="stat"><strong>Verts:</strong> '+d.vertices.toLocaleString()+'</span>';
+                if(d.shape_time)s+='<span class="stat"><strong>Shape:</strong> '+d.shape_time+'s</span>';
+                if(d.texture_time)s+='<span class="stat"><strong>Texture:</strong> '+d.texture_time+'s</span>';
+                if(d.raw_faces&&d.raw_faces!==d.faces)s+='<span class="stat"><strong>Reduced:</strong> '+d.raw_faces.toLocaleString()+' &rarr; '+d.faces.toLocaleString()+'</span>';
+                statsRow.innerHTML=s;
+                if(selectedFormat==="glb"){
+                    const e=previewBody.querySelector("model-viewer");
+                    if(e)e.remove();
+                    placeholder.style.display="none";
+                    const v=document.createElement("model-viewer");
+                    v.setAttribute("src","/api/preview/"+d.file);
+                    v.setAttribute("camera-controls","");
+                    v.setAttribute("auto-rotate","");
+                    v.setAttribute("shadow-intensity","1");
+                    v.setAttribute("environment-image","neutral");
+                    v.style.cssText="width:100%;height:100%;min-height:460px;background:transparent";
+                    previewBody.appendChild(v);
+                }else{
+                    placeholder.innerHTML='<div class="icon">&#x2713;</div><p>Ready! Click Download.</p>';
+                    placeholder.style.display="block";
+                }
+                downloadBtn.style.display="block";
+                downloadBtn.onclick=()=>{window.location.href="/api/download/"+d.file};
+                resetBtn();
+            }else if(d.status==="error"){
+                clearInterval(interval);
+                showError(d.error||"Generation failed");
+                resetBtn();
+            }
+        }catch(e){
+            failures++;
+            checkFailures();
+        }
+        function checkFailures(){
+            if(failures>=MAX_POLL_FAILURES){
+                clearInterval(interval);
+                showError("Lost connection to server.");
+                resetBtn();
+            }else if(failures>=3){
+                statusText.textContent="Connection unstable (retry "+failures+"/"+MAX_POLL_FAILURES+")...";
+                statusText.className="status-text error";
+            }
+        }
+    },2000);
+}
+function formatTime(s){
+    if(s<60)return s+"s";
+    return Math.floor(s/60)+"m "+s%60+"s";
+}
+
+function showError(msg){
+    errorBox.textContent=msg;
+    errorBox.classList.add("visible");
+    statusText.textContent="Failed";
+    statusText.className="status-text error";
+    progressBar.classList.remove("visible");
+}
+
+function resetBtn(){
+    isGenerating=false;
+    generateBtn.disabled=false;
+    generateBtn.textContent="Generate 3D Model";
+}
+</script>
+</body>
+</html>

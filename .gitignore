@@ -1,0 +1,6 @@
+uploads/
+outputs/
+jobs/
+__pycache__/
+*.pyc
+app_log.txt
