@@ -62,14 +62,11 @@ echo "    Patched: delight 50->15 steps, multiview 30->12 steps"
 echo ""
 echo "[7/8] Downloading app files..."
 mkdir -p outputs uploads static jobs
-python -c "
-import urllib.request
-urllib.request.urlretrieve('https://paste.rs/Q2fGq', '/workspace/Hunyuan3D-2/app.py')
-urllib.request.urlretrieve('https://paste.rs/ehvTI', '/workspace/Hunyuan3D-2/static/index.html')
-import os
-print('    app.py:', os.path.getsize('/workspace/Hunyuan3D-2/app.py'), 'bytes')
-print('    index.html:', os.path.getsize('/workspace/Hunyuan3D-2/static/index.html'), 'bytes')
-"
+echo "    Downloading from GitHub..."
+curl -sL https://raw.githubusercontent.com/SarpTolga/hunyuanMadness/main/cloud_app.py -o app.py
+curl -sL https://raw.githubusercontent.com/SarpTolga/hunyuanMadness/main/static/index.html -o static/index.html
+echo "    app.py: $(wc -c < app.py) bytes"
+echo "    index.html: $(wc -c < static/index.html) bytes"
 
 # Step 5: Fix Caddy proxy
 echo ""

@@ -24,17 +24,13 @@ For **textured 3D models**, you rent a cloud GPU with 24GB+ VRAM on Vast.ai.
 After renting your instance and opening Jupyter Terminal, just run:
 
 ```bash
-curl -s https://paste.rs/Azh69 | bash
+curl -sL https://raw.githubusercontent.com/SarpTolga/hunyuanMadness/main/cloud_setup.sh | bash
 ```
 
-This does everything automatically (clone, install, build, download app, fix Caddy, start server).
+This does everything automatically (clone, install, build, download app from GitHub, patch texture pipeline, fix Caddy, start server).
 Wait for `[+] All models ready!` then create a tunnel to `http://localhost:3333`.
 
-> **If paste.rs URLs expired:** You need to re-upload 3 files from your PC and update the URLs:
-> - `D:\Hunyuan3DStudio\cloud_setup.sh` --> the setup script itself (contains URLs for the other 2 files)
-> - `D:\Hunyuan3DStudio\cloud_app.py` --> the server app
-> - `D:\Hunyuan3DStudio\static\index.html` --> the web UI
-> Upload each to https://paste.rs, update URLs in `cloud_setup.sh`, re-upload the script, then use the new script URL.
+> **No more expiring URLs!** The setup script pulls files directly from GitHub.
 
 ---
 
@@ -153,17 +149,15 @@ mkdir -p outputs uploads static jobs
 
 ```python
 import urllib.request
-urllib.request.urlretrieve("https://paste.rs/vVVMK", "/workspace/Hunyuan3D-2/app.py")
-urllib.request.urlretrieve("https://paste.rs/fSZg7", "/workspace/Hunyuan3D-2/static/index.html")
+urllib.request.urlretrieve("https://raw.githubusercontent.com/SarpTolga/hunyuanMadness/main/cloud_app.py", "/workspace/Hunyuan3D-2/app.py")
+urllib.request.urlretrieve("https://raw.githubusercontent.com/SarpTolga/hunyuanMadness/main/static/index.html", "/workspace/Hunyuan3D-2/static/index.html")
 print("Both files downloaded!")
 import os
 print("app.py:", os.path.getsize("/workspace/Hunyuan3D-2/app.py"), "bytes")
 print("index.html:", os.path.getsize("/workspace/Hunyuan3D-2/static/index.html"), "bytes")
 ```
 
-> **If paste.rs URLs expired:** Re-upload from your PC:
-> - `D:\Hunyuan3DStudio\cloud_app.py` --> upload to https://paste.rs --> use new URL for app.py
-> - `D:\Hunyuan3DStudio\static\index.html` --> upload to https://paste.rs --> use new URL for index.html
+> **No more expiring URLs!** Files are pulled directly from the GitHub repo.
 
 ---
 
