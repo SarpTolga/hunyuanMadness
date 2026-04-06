@@ -219,19 +219,24 @@ def run_generation(job_id,img_path,quality,export_format,texture_mode,target_fac
                     from hy3dgen.texgen.utils.uv_warp_utils import mesh_uv_wrap
                     mesh=mesh_uv_wrap(mesh)
                     paint_pipeline.render.load_mesh(mesh)
+                    # Convert image to RGB for projection
+                    proj_image=image.convert("RGB")
                     # Project from front view
-                    proj_tex,proj_cos,proj_boundary=paint_pipeline.render.back_project(image,elev=0,azim=0)
+                    proj_tex,proj_cos,proj_boundary=paint_pipeline.render.back_project(proj_image,elev=0,azim=0)
                     # Project from back view too for coverage
-                    proj_tex2,proj_cos2,proj_boundary2=paint_pipeline.render.back_project(image,elev=0,azim=180)
+                    proj_tex2,proj_cos2,proj_boundary2=paint_pipeline.render.back_project(proj_image,elev=0,azim=180)
                     # Merge views
                     texture,trust=paint_pipeline.render.fast_bake_texture(
                         [proj_tex,proj_tex2],
                         [proj_cos**4, (proj_cos2**4)*0.3])
+                    # Ensure texture is 3-channel RGB float
+                    if texture.shape[-1]==4:
+                        texture=texture[...,:3]
                     # Inpaint gaps
                     import numpy as np
                     trust_np=trust.squeeze(-1).cpu().numpy()
                     mask_np=np.where(trust_np>1e-8,255,0).astype(np.uint8)
-                    texture=paint_pipeline.texture_inpaint(texture,255-mask_np)
+                    texture=paint_pipeline.texture_inpaint(texture,mask_np)
                     paint_pipeline.render.set_texture(texture)
                     mesh=paint_pipeline.render.save_mesh()
                     texture_time=round(time.time()-t1,1)
