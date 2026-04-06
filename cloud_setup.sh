@@ -52,11 +52,11 @@ cd hy3dgen/texgen/differentiable_renderer && python setup.py install && cd ../..
 # Step 4: Patch texture pipeline for speed (Unity game mode)
 echo ""
 echo "[6/8] Patching texture pipeline for speed..."
-# Light removal: 50 steps -> 15 steps (saves ~2 min)
-sed -i 's/num_inference_steps=50/num_inference_steps=15/' hy3dgen/texgen/utils/dehighlight_utils.py
-# Multiview diffusion: 30 steps -> 12 steps (saves ~1.5 min)
-sed -i 's/num_inference_steps=30/num_inference_steps=12/' hy3dgen/texgen/utils/multiview_utils.py
-echo "    Patched: delight 50->15 steps, multiview 30->12 steps"
+# Light removal: 50 steps -> 25 steps (good balance of speed/quality)
+sed -i 's/num_inference_steps=50/num_inference_steps=25/' hy3dgen/texgen/utils/dehighlight_utils.py
+# Multiview diffusion: 30 steps -> 20 steps (good balance of speed/quality)
+sed -i 's/num_inference_steps=30/num_inference_steps=20/' hy3dgen/texgen/utils/multiview_utils.py
+echo "    Patched: delight 50->25 steps, multiview 30->20 steps"
 
 # Step 5: Create directories & download app files
 echo ""
