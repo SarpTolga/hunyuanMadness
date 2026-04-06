@@ -38,6 +38,15 @@ QUALITY_PRESETS={
         "texture_size":1024,
         "render_size":1024,
     },
+    "ultra":{
+        "steps":50,
+        "octree_resolution":384,
+        "guidance_scale":7.5,
+        "num_chunks":20000,
+        "max_faces":50000,
+        "texture_size":2048,
+        "render_size":2048,
+    },
 }
 
 shape_pipeline=None
