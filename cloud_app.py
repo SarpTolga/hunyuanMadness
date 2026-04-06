@@ -1,4 +1,4 @@
-import os,sys,time,uuid,traceback,threading,json,multiprocessing,gc
+import os,sys,time,uuid,traceback,threading,json,multiprocessing,gc,random
 from pathlib import Path
 from flask import Flask,request,jsonify,send_from_directory,send_file
 from werkzeug.utils import secure_filename
@@ -43,6 +43,7 @@ QUALITY_PRESETS={
 shape_pipeline=None
 paint_pipeline=None
 rembg_worker=None
+t2i_worker=None
 face_reducer=None
 floater_remover=None
 degen_remover=None
@@ -64,14 +65,14 @@ def update_job(job_id,**kwargs):
     write_job(job_id,data)
 
 def load_models():
-    global shape_pipeline,paint_pipeline,rembg_worker,face_reducer,floater_remover,degen_remover
+    global shape_pipeline,paint_pipeline,rembg_worker,t2i_worker,face_reducer,floater_remover,degen_remover
     import torch
 
     print("[*] Loading background remover...")
     from hy3dgen.rembg import BackgroundRemover
     rembg_worker=BackgroundRemover()
 
-    print("[*] Loading shape model (Mini Turbo)...")
+    print("[*] Loading shape model (Mini)...")
     from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline
     shape_pipeline=Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
         "tencent/Hunyuan3D-2mini",
@@ -93,7 +94,7 @@ def load_models():
         face_reducer=FaceReducer()
         floater_remover=FloaterRemover()
         degen_remover=DegenerateFaceRemover()
-        print("[+] Postprocessors ready (FaceReducer, FloaterRemover, DegenerateFaceRemover)")
+        print("[+] Postprocessors ready")
     except Exception as e:
         print(f"[!] Postprocessors failed: {e}")
 
@@ -101,12 +102,19 @@ def load_models():
     try:
         from hy3dgen.texgen import Hunyuan3DPaintPipeline
         paint_pipeline=Hunyuan3DPaintPipeline.from_pretrained("tencent/Hunyuan3D-2")
-        # NOTE: Do NOT use enable_model_cpu_offload() on cloud GPUs with 24GB+
-        # It shuffles data CPU<->GPU and makes everything 5-10x slower
         print("[+] Texture model loaded (full GPU)!")
     except Exception as e:
         print(f"[!] Texture failed: {e}")
         paint_pipeline=None
+
+    print("[*] Loading text-to-image model...")
+    try:
+        from hy3dgen.text2image import HunyuanDiTPipeline
+        t2i_worker=HunyuanDiTPipeline(device='cuda')
+        print("[+] Text-to-image model loaded!")
+    except Exception as e:
+        print(f"[!] Text-to-image failed: {e}")
+        t2i_worker=None
 
     torch.cuda.empty_cache()
     print("[+] All models ready!")
@@ -123,28 +131,42 @@ def clear_gpu():
         torch.cuda.ipc_collect()
         torch.cuda.synchronize()
 
-def run_generation(job_id,img_path,quality,export_format,enable_texture,target_faces):
+def run_generation(job_id,img_path,quality,export_format,enable_texture,target_faces,seed,prompt):
     import torch
     from PIL import Image
 
-    # Only one generation at a time — prevents VRAM conflicts
+    # Only one generation at a time
     with gen_lock:
         preset=QUALITY_PRESETS.get(quality,QUALITY_PRESETS["balanced"])
         max_faces=target_faces or preset["max_faces"]
         try:
             clear_gpu()
 
+            # Text-to-image if prompt provided
+            if prompt and t2i_worker:
+                update_job(job_id,status="generating_image",heartbeat=time.time())
+                print(f"[{job_id}] Generating image from text: '{prompt}'...")
+                t_t2i=time.time()
+                image=t2i_worker(prompt,seed=seed)
+                t2i_time=round(time.time()-t_t2i,1)
+                print(f"[{job_id}] Image generated in {t2i_time}s")
+                update_job(job_id,t2i_time=t2i_time,heartbeat=time.time())
+                # Save generated image for reference
+                image.save(str(UPLOAD_DIR/f"{job_id}_generated.png"))
+            else:
+                # Load uploaded image
+                image=Image.open(str(img_path)).convert("RGBA")
+
             # Remove background
             update_job(job_id,status="removing_bg",heartbeat=time.time())
-            image=Image.open(str(img_path)).convert("RGBA")
             print(f"[{job_id}] Removing background...")
             image=rembg_worker(image.convert("RGB"))
 
             # Generate shape
             update_job(job_id,status="generating_shape",heartbeat=time.time())
-            print(f"[{job_id}] Generating shape ({quality}, {preset['steps']} steps, res={preset['octree_resolution']})...")
+            print(f"[{job_id}] Generating shape ({quality}, {preset['steps']} steps, res={preset['octree_resolution']}, seed={seed})...")
             t0=time.time()
-            generator=torch.Generator().manual_seed(42)
+            generator=torch.Generator().manual_seed(seed)
             mesh=shape_pipeline(
                 image=image,
                 num_inference_steps=preset["steps"],
@@ -168,7 +190,7 @@ def run_generation(job_id,img_path,quality,export_format,enable_texture,target_f
                 print(f"[{job_id}] Removing degenerate faces...")
                 mesh=degen_remover(mesh)
 
-            # Face reduction BEFORE texture — UV unwrapping 600K faces is extremely slow
+            # Face reduction BEFORE texture
             if face_reducer and max_faces>0:
                 cur_faces=int(mesh.faces.shape[0]) if hasattr(mesh,"faces") else 0
                 if cur_faces>max_faces:
@@ -178,14 +200,13 @@ def run_generation(job_id,img_path,quality,export_format,enable_texture,target_f
                     reduced_faces=int(mesh.faces.shape[0]) if hasattr(mesh,"faces") else 0
                     print(f"[{job_id}] Reduced to {reduced_faces} faces")
 
-            # Texture on the reduced mesh (much faster UV unwrap + bake)
+            # Texture on the reduced mesh
             texture_time=None
             if enable_texture and paint_pipeline:
                 update_job(job_id,status="generating_texture",heartbeat=time.time())
                 print(f"[{job_id}] Generating texture (render={preset['render_size']}, tex={preset['texture_size']})...")
                 clear_gpu()
 
-                # Configure texture resolution
                 if hasattr(paint_pipeline,'config'):
                     paint_pipeline.config.render_size=preset["render_size"]
                     paint_pipeline.config.texture_size=preset["texture_size"]
@@ -226,7 +247,7 @@ def run_generation(job_id,img_path,quality,export_format,enable_texture,target_f
             verts=int(mesh.vertices.shape[0]) if hasattr(mesh,"vertices") else 0
             print(f"[{job_id}] Done! {faces} faces, {verts} verts")
             update_job(job_id,status="done",file=out_name,faces=faces,vertices=verts,
-                       raw_faces=raw_faces,max_faces=max_faces,heartbeat=time.time())
+                       raw_faces=raw_faces,max_faces=max_faces,seed=seed,heartbeat=time.time())
         except RuntimeError as e:
             if "out of memory" in str(e).lower():
                 clear_gpu()
@@ -251,6 +272,7 @@ def status():
     return jsonify({
         "shape_ready":shape_pipeline is not None,
         "texture_ready":paint_pipeline is not None,
+        "t2i_ready":t2i_worker is not None,
         "gpu":gpu,
         "vram_gb":round(vram,1),
         "flashvdm":hasattr(shape_pipeline,'flashvdm_enabled') and shape_pipeline.flashvdm_enabled if shape_pipeline else False,
@@ -258,25 +280,40 @@ def status():
     })
 @app.route("/api/generate",methods=["POST"])
 def generate():
-    if "image" not in request.files:
-        return jsonify({"error":"No image"}),400
-    file=request.files["image"]
-    if not file or not allowed_file(file.filename):
-        return jsonify({"error":"Invalid file type"}),400
+    prompt=request.form.get("prompt","").strip()
+    has_image="image" in request.files and request.files["image"].filename!=""
+    if not prompt and not has_image:
+        return jsonify({"error":"Upload an image or enter a text prompt"}),400
+    if has_image:
+        file=request.files["image"]
+        if not allowed_file(file.filename):
+            return jsonify({"error":"Invalid file type"}),400
+    if prompt and not t2i_worker:
+        return jsonify({"error":"Text-to-image model not loaded"}),400
+
     quality=request.form.get("quality","balanced")
     export_format=request.form.get("format","glb")
     enable_texture=request.form.get("texture","false")=="true"
     target_faces=int(request.form.get("faces","0"))
+    seed_str=request.form.get("seed","").strip()
+    seed=int(seed_str) if seed_str and seed_str!="-1" else random.randint(0,999999)
+
     job_id=str(uuid.uuid4())[:8]
-    print(f"\n[{job_id}] quality={quality}, format={export_format}, texture={enable_texture}, faces={target_faces}")
-    filename=f"{job_id}_{secure_filename(file.filename)}"
-    img_path=UPLOAD_DIR/filename
-    file.save(str(img_path))
-    write_job(job_id,{"status":"queued","quality":quality,"format":export_format,
-                      "shape_time":None,"texture_time":None,"error":None,"heartbeat":time.time()})
-    t=threading.Thread(target=run_generation,args=(job_id,img_path,quality,export_format,enable_texture,target_faces),daemon=True)
+    mode="text" if prompt else "image"
+    print(f"\n[{job_id}] mode={mode}, quality={quality}, format={export_format}, texture={enable_texture}, faces={target_faces}, seed={seed}")
+
+    img_path=None
+    if has_image:
+        filename=f"{job_id}_{secure_filename(request.files['image'].filename)}"
+        img_path=UPLOAD_DIR/filename
+        request.files["image"].save(str(img_path))
+
+    write_job(job_id,{"status":"queued","quality":quality,"format":export_format,"mode":mode,
+                      "prompt":prompt,"seed":seed,
+                      "shape_time":None,"texture_time":None,"t2i_time":None,"error":None,"heartbeat":time.time()})
+    t=threading.Thread(target=run_generation,args=(job_id,img_path,quality,export_format,enable_texture,target_faces,seed,prompt),daemon=True)
     t.start()
-    return jsonify({"job_id":job_id})
+    return jsonify({"job_id":job_id,"seed":seed})
 @app.route("/api/job/<job_id>")
 def job_status(job_id):
     data=read_job(job_id)

@@ -6,23 +6,32 @@
     <title>Hunyuan3D Studio</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}.header{text-align:center;padding:30px 20px 10px}.header h1{font-size:1.8em;font-weight:700;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}.header p{color:#666;font-size:.9em}.gpu-badge{display:inline-block;margin-top:8px;padding:4px 12px;background:#1a1a2e;border:1px solid #2a2a3e;border-radius:20px;font-size:.75em;color:#888}.gpu-badge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#2ecc71;margin-right:6px;vertical-align:middle}.container{max-width:1100px;margin:0 auto;padding:20px;display:grid;grid-template-columns:380px 1fr;gap:24px}.panel{background:#12121a;border:1px solid #1e1e2e;border-radius:12px;padding:24px}.section-title{font-size:.75em;text-transform:uppercase;letter-spacing:1.5px;color:#555;margin-bottom:12px}.drop-zone{border:2px dashed #2a2a3e;border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:20px;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center}.drop-zone:hover{border-color:#6c5ce7;background:rgba(108,92,231,.05)}.drop-zone.has-image{padding:10px;border-style:solid;border-color:#2ecc71}.drop-zone .icon{font-size:2.5em;margin-bottom:10px;opacity:.4}.drop-zone .label{color:#666;font-size:.85em}.drop-zone .label span{color:#6c5ce7;text-decoration:underline;cursor:pointer}.drop-zone img{max-width:100%;max-height:160px;border-radius:6px}#imageInput{display:none}.quality-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}.quality-btn{padding:10px 8px;background:#1a1a2e;border:2px solid #2a2a3e;border-radius:8px;color:#aaa;cursor:pointer;text-align:center;transition:all .2s;font-size:.85em}.quality-btn:hover{border-color:#6c5ce7}.quality-btn.active{border-color:#6c5ce7;background:rgba(108,92,231,.15);color:#fff}.quality-btn .name{font-weight:600}.quality-btn .desc{font-size:.7em;color:#666;margin-top:2px}.format-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}.format-btn{padding:8px;background:#1a1a2e;border:2px solid #2a2a3e;border-radius:8px;color:#aaa;cursor:pointer;text-align:center;transition:all .2s;font-size:.85em;font-weight:600}.format-btn:hover{border-color:#6c5ce7}.format-btn.active{border-color:#6c5ce7;background:rgba(108,92,231,.15);color:#fff}.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#1a1a2e;border-radius:8px;margin-bottom:12px;cursor:pointer}.toggle-row label{font-size:.85em;cursor:pointer}.toggle-row .tag{font-size:.65em;padding:2px 8px;border-radius:10px;margin-left:8px}.switch{position:relative;width:44px;height:24px;pointer-events:none}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;inset:0;background:#2a2a3e;border-radius:24px;transition:.2s}.slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#666;border-radius:50%;transition:.2s}.switch input:checked+.slider{background:#6c5ce7}.switch input:checked+.slider:before{transform:translateX(20px);background:#fff}.range-row{padding:12px 16px;background:#1a1a2e;border-radius:8px;margin-bottom:20px}.range-row .range-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.range-row .range-label label{font-size:.85em}.range-row .range-label .value{font-size:.85em;color:#6c5ce7;font-weight:600}.range-row input[type=range]{width:100%;-webkit-appearance:none;background:#2a2a3e;height:4px;border-radius:4px;outline:none}.range-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#6c5ce7;cursor:pointer}.generate-btn{width:100%;padding:14px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s}.generate-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(108,92,231,.4)}.generate-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}.preview-panel{background:#12121a;border:1px solid #1e1e2e;border-radius:12px;display:flex;flex-direction:column;min-height:500px}.preview-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #1e1e2e}.preview-header h3{font-size:.9em;color:#888}.download-btn{padding:8px 20px;background:#2ecc71;border:none;border-radius:8px;color:#fff;font-weight:600;font-size:.85em;cursor:pointer;display:none}.download-btn:hover{background:#27ae60}.preview-body{flex:1;display:flex;align-items:center;justify-content:center}.preview-placeholder{text-align:center;color:#333}.preview-placeholder .icon{font-size:4em;margin-bottom:10px}.preview-placeholder p{font-size:.85em}model-viewer{width:100%;height:100%;min-height:460px;background:transparent}.status-bar{padding:14px 20px;border-top:1px solid #1e1e2e;font-size:.8em;display:none}.status-bar.visible{display:block}.status-text{color:#888}.status-text.loading{color:#f39c12}.status-text.success{color:#2ecc71}.status-text.error{color:#e74c3c}.stats-row{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}.stat{font-size:.85em;color:#555}.stat strong{color:#888}.progress-bar{width:100%;height:3px;background:#1a1a2e;border-radius:3px;margin-top:10px;overflow:hidden;display:none}.progress-bar.visible{display:block}.progress-bar .fill{height:100%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);border-radius:3px;animation:pi 1.5s ease-in-out infinite;width:30%}@keyframes pi{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}.error-box{margin-top:16px;padding:12px 16px;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);border-radius:8px;color:#e74c3c;font-size:.82em;display:none}.error-box.visible{display:block}@media(max-width:800px){.container{grid-template-columns:1fr}}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}.header{text-align:center;padding:30px 20px 10px}.header h1{font-size:1.8em;font-weight:700;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}.header p{color:#666;font-size:.9em}.gpu-badge{display:inline-block;margin-top:8px;padding:4px 12px;background:#1a1a2e;border:1px solid #2a2a3e;border-radius:20px;font-size:.75em;color:#888}.gpu-badge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#2ecc71;margin-right:6px;vertical-align:middle}.container{max-width:1100px;margin:0 auto;padding:20px;display:grid;grid-template-columns:380px 1fr;gap:24px}.panel{background:#12121a;border:1px solid #1e1e2e;border-radius:12px;padding:24px}.section-title{font-size:.75em;text-transform:uppercase;letter-spacing:1.5px;color:#555;margin-bottom:12px}.mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}.mode-tab{padding:10px;background:#1a1a2e;border:2px solid #2a2a3e;border-radius:8px;color:#aaa;cursor:pointer;text-align:center;font-size:.85em;font-weight:600;transition:all .2s}.mode-tab.active{border-color:#6c5ce7;background:rgba(108,92,231,.15);color:#fff}.mode-tab:hover{border-color:#6c5ce7}.input-area{margin-bottom:20px}.drop-zone{border:2px dashed #2a2a3e;border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:all .2s;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center}.drop-zone:hover{border-color:#6c5ce7;background:rgba(108,92,231,.05)}.drop-zone.has-image{padding:10px;border-style:solid;border-color:#2ecc71}.drop-zone .icon{font-size:2.5em;margin-bottom:10px;opacity:.4}.drop-zone .label{color:#666;font-size:.85em}.drop-zone .label span{color:#6c5ce7;text-decoration:underline;cursor:pointer}.drop-zone img{max-width:100%;max-height:140px;border-radius:6px}#imageInput{display:none}.text-input{width:100%;padding:14px;background:#1a1a2e;border:2px solid #2a2a3e;border-radius:10px;color:#e0e0e0;font-size:.9em;font-family:inherit;resize:vertical;min-height:80px;outline:none;transition:border-color .2s}.text-input:focus{border-color:#6c5ce7}.text-input::placeholder{color:#555}.quality-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.quality-btn{padding:10px 8px;background:#1a1a2e;border:2px solid #2a2a3e;border-radius:8px;color:#aaa;cursor:pointer;text-align:center;transition:all .2s;font-size:.85em}.quality-btn:hover{border-color:#6c5ce7}.quality-btn.active{border-color:#6c5ce7;background:rgba(108,92,231,.15);color:#fff}.quality-btn .name{font-weight:600}.quality-btn .desc{font-size:.7em;color:#666;margin-top:2px}.format-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}.format-btn{padding:8px;background:#1a1a2e;border:2px solid #2a2a3e;border-radius:8px;color:#aaa;cursor:pointer;text-align:center;transition:all .2s;font-size:.85em;font-weight:600}.format-btn:hover{border-color:#6c5ce7}.format-btn.active{border-color:#6c5ce7;background:rgba(108,92,231,.15);color:#fff}.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#1a1a2e;border-radius:8px;margin-bottom:12px;cursor:pointer}.toggle-row label{font-size:.85em;cursor:pointer}.toggle-row .tag{font-size:.65em;padding:2px 8px;border-radius:10px;margin-left:8px}.switch{position:relative;width:44px;height:24px;pointer-events:none}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;inset:0;background:#2a2a3e;border-radius:24px;transition:.2s}.slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#666;border-radius:50%;transition:.2s}.switch input:checked+.slider{background:#6c5ce7}.switch input:checked+.slider:before{transform:translateX(20px);background:#fff}.range-row{padding:12px 16px;background:#1a1a2e;border-radius:8px;margin-bottom:12px}.range-row .range-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.range-row .range-label label{font-size:.85em}.range-row .range-label .value{font-size:.85em;color:#6c5ce7;font-weight:600}.range-row input[type=range]{width:100%;-webkit-appearance:none;background:#2a2a3e;height:4px;border-radius:4px;outline:none}.range-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#6c5ce7;cursor:pointer}.seed-row{display:flex;gap:8px;padding:12px 16px;background:#1a1a2e;border-radius:8px;margin-bottom:16px;align-items:center}.seed-row label{font-size:.85em;white-space:nowrap}.seed-row input[type=number]{flex:1;padding:6px 10px;background:#0a0a0f;border:1px solid #2a2a3e;border-radius:6px;color:#e0e0e0;font-size:.85em;outline:none;-moz-appearance:textfield}.seed-row input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}.seed-row .dice-btn{padding:6px 12px;background:#2a2a3e;border:none;border-radius:6px;color:#aaa;cursor:pointer;font-size:1em;transition:all .2s}.seed-row .dice-btn:hover{background:#6c5ce7;color:#fff}.generate-btn{width:100%;padding:14px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s}.generate-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(108,92,231,.4)}.generate-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}.preview-panel{background:#12121a;border:1px solid #1e1e2e;border-radius:12px;display:flex;flex-direction:column;min-height:500px}.preview-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #1e1e2e}.preview-header h3{font-size:.9em;color:#888}.download-btn{padding:8px 20px;background:#2ecc71;border:none;border-radius:8px;color:#fff;font-weight:600;font-size:.85em;cursor:pointer;display:none}.download-btn:hover{background:#27ae60}.preview-body{flex:1;display:flex;align-items:center;justify-content:center}.preview-placeholder{text-align:center;color:#333}.preview-placeholder .icon{font-size:4em;margin-bottom:10px}.preview-placeholder p{font-size:.85em}model-viewer{width:100%;height:100%;min-height:460px;background:transparent}.status-bar{padding:14px 20px;border-top:1px solid #1e1e2e;font-size:.8em;display:none}.status-bar.visible{display:block}.status-text{color:#888}.status-text.loading{color:#f39c12}.status-text.success{color:#2ecc71}.status-text.error{color:#e74c3c}.stats-row{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}.stat{font-size:.85em;color:#555}.stat strong{color:#888}.progress-bar{width:100%;height:3px;background:#1a1a2e;border-radius:3px;margin-top:10px;overflow:hidden;display:none}.progress-bar.visible{display:block}.progress-bar .fill{height:100%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);border-radius:3px;animation:pi 1.5s ease-in-out infinite;width:30%}@keyframes pi{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}.error-box{margin-top:16px;padding:12px 16px;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);border-radius:8px;color:#e74c3c;font-size:.82em;display:none}.error-box.visible{display:block}@media(max-width:800px){.container{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
 <div class="header">
     <h1>Hunyuan3D Studio</h1>
-    <p>AI-powered image to 3D model generation</p>
+    <p>AI-powered image or text to 3D model generation</p>
     <div class="gpu-badge" id="gpuBadge"><span class="dot"></span>Loading...</div>
 </div>
 <div class="container">
     <div class="panel">
-        <div class="section-title">Input Image</div>
-        <div class="drop-zone" id="dropZone">
-            <div class="icon">+</div>
-            <div class="label">Drag & drop or <span id="browseLink">browse</span></div>
+        <div class="section-title">Input</div>
+        <div class="mode-tabs">
+            <div class="mode-tab active" data-mode="image">Image</div>
+            <div class="mode-tab" data-mode="text" id="textTab">Text</div>
         </div>
-        <input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp">
+        <div class="input-area" id="imageArea">
+            <div class="drop-zone" id="dropZone">
+                <div class="icon">+</div>
+                <div class="label">Drag & drop or <span id="browseLink">browse</span></div>
+            </div>
+            <input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp">
+        </div>
+        <div class="input-area" id="textArea" style="display:none">
+            <textarea class="text-input" id="promptInput" placeholder="Describe the 3D object you want...&#10;e.g. a red sports car, a medieval sword, a cute cat"></textarea>
+        </div>
         <div class="section-title">Quality</div>
         <div class="quality-grid">
             <div class="quality-btn" data-quality="fast"><div class="name">Fast</div><div class="desc">5 steps ~30s</div></div>
@@ -47,6 +56,11 @@
             </div>
             <input type="range" id="facesSlider" min="0" max="50000" step="1000" value="10000">
         </div>
+        <div class="seed-row">
+            <label>Seed</label>
+            <input type="number" id="seedInput" value="-1" min="-1" max="999999" placeholder="Random">
+            <button class="dice-btn" id="diceBtn" title="Randomize">&#x1F3B2;</button>
+        </div>
         <button class="generate-btn" id="generateBtn" disabled>Generate 3D Model</button>
         <div class="error-box" id="errorBox"></div>
     </div>
@@ -63,8 +77,8 @@
     </div>
 </div>
 <script>
-let selectedFile=null,selectedQuality="balanced",selectedFormat="glb",isGenerating=false;
-const dropZone=document.getElementById("dropZone"),imageInput=document.getElementById("imageInput"),generateBtn=document.getElementById("generateBtn"),downloadBtn=document.getElementById("downloadBtn"),textureToggle=document.getElementById("textureToggle"),errorBox=document.getElementById("errorBox"),statusBar=document.getElementById("statusBar"),statusText=document.getElementById("statusText"),statsRow=document.getElementById("statsRow"),progressBar=document.getElementById("progressBar"),previewBody=document.getElementById("previewBody"),placeholder=document.getElementById("placeholder"),gpuBadge=document.getElementById("gpuBadge"),textureTag=document.getElementById("textureTag"),facesSlider=document.getElementById("facesSlider"),facesValue=document.getElementById("facesValue");
+let selectedFile=null,selectedQuality="balanced",selectedFormat="glb",isGenerating=false,inputMode="image";
+const dropZone=document.getElementById("dropZone"),imageInput=document.getElementById("imageInput"),generateBtn=document.getElementById("generateBtn"),downloadBtn=document.getElementById("downloadBtn"),textureToggle=document.getElementById("textureToggle"),errorBox=document.getElementById("errorBox"),statusBar=document.getElementById("statusBar"),statusText=document.getElementById("statusText"),statsRow=document.getElementById("statsRow"),progressBar=document.getElementById("progressBar"),previewBody=document.getElementById("previewBody"),placeholder=document.getElementById("placeholder"),gpuBadge=document.getElementById("gpuBadge"),textureTag=document.getElementById("textureTag"),facesSlider=document.getElementById("facesSlider"),facesValue=document.getElementById("facesValue"),promptInput=document.getElementById("promptInput"),seedInput=document.getElementById("seedInput"),imageArea=document.getElementById("imageArea"),textArea=document.getElementById("textArea"),textTab=document.getElementById("textTab");
 
 function updateFacesLabel(){
     const v=parseInt(facesSlider.value);
@@ -72,6 +86,27 @@ function updateFacesLabel(){
 }
 facesSlider.addEventListener("input",updateFacesLabel);
 updateFacesLabel();
+
+document.getElementById("diceBtn").addEventListener("click",()=>{
+    seedInput.value=Math.floor(Math.random()*999999);
+});
+
+// Mode tabs
+document.querySelectorAll(".mode-tab").forEach(t=>{t.addEventListener("click",()=>{
+    document.querySelectorAll(".mode-tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    inputMode=t.dataset.mode;
+    imageArea.style.display=inputMode==="image"?"block":"none";
+    textArea.style.display=inputMode==="text"?"block":"none";
+    updateGenerateBtn();
+})});
+
+// Enable/disable generate button
+function updateGenerateBtn(){
+    if(inputMode==="image") generateBtn.disabled=!selectedFile;
+    else generateBtn.disabled=!promptInput.value.trim();
+}
+promptInput.addEventListener("input",updateGenerateBtn);
 
 fetch("/api/status").then(r=>r.json()).then(d=>{
     let badge=d.gpu+" ("+d.vram_gb+" GB)";
@@ -87,6 +122,11 @@ fetch("/api/status").then(r=>r.json()).then(d=>{
         textureTag.style.background="rgba(243,156,18,.2)";
         textureTag.style.color="#f39c12";
         textureToggle.checked=false;
+    }
+    if(!d.t2i_ready){
+        textTab.style.opacity="0.4";
+        textTab.style.pointerEvents="none";
+        textTab.title="Text-to-image model not loaded";
     }
 }).catch(()=>{
     gpuBadge.innerHTML='<span class="dot" style="background:#e74c3c"></span>Server offline';
@@ -107,7 +147,7 @@ function setImage(f){
     const r=new FileReader();
     r.onload=e=>{dropZone.innerHTML='<img src="'+e.target.result+'">';dropZone.classList.add("has-image")};
     r.readAsDataURL(f);
-    generateBtn.disabled=false;
+    updateGenerateBtn();
     errorBox.classList.remove("visible");
 }
 
@@ -117,11 +157,12 @@ document.getElementById("textureRow").addEventListener("click",()=>{textureToggl
 
 const STATUS_MESSAGES={
     "queued":"Starting generation...",
+    "generating_image":"Generating image from text...",
     "removing_bg":"Removing background...",
     "generating_shape":"Generating 3D shape...",
     "cleaning_mesh":"Cleaning mesh...",
-    "generating_texture":"Generating texture...",
     "reducing_faces":"Reducing face count...",
+    "generating_texture":"Generating texture...",
     "exporting":"Exporting model...",
     "done":"Done!",
     "error":"Generation failed"
@@ -129,29 +170,35 @@ const STATUS_MESSAGES={
 const MAX_POLL_FAILURES=15;
 
 generateBtn.addEventListener("click",async()=>{
-    if(!selectedFile||isGenerating)return;
+    if(isGenerating)return;
+    if(inputMode==="image"&&!selectedFile)return;
+    if(inputMode==="text"&&!promptInput.value.trim())return;
+
     isGenerating=true;
     generateBtn.disabled=true;
     generateBtn.textContent="Generating...";
     errorBox.classList.remove("visible");
     statusBar.classList.add("visible");
-    statusText.textContent="Uploading image...";
+    statusText.textContent=inputMode==="text"?"Generating image from text...":"Uploading image...";
     statusText.className="status-text loading";
     progressBar.classList.add("visible");
     downloadBtn.style.display="none";
     statsRow.innerHTML="";
 
     const fd=new FormData();
-    fd.append("image",selectedFile);
+    if(inputMode==="image"&&selectedFile) fd.append("image",selectedFile);
+    if(inputMode==="text") fd.append("prompt",promptInput.value.trim());
     fd.append("quality",selectedQuality);
     fd.append("format",selectedFormat);
     fd.append("texture",textureToggle.checked?"true":"false");
     fd.append("faces",facesSlider.value);
+    fd.append("seed",seedInput.value);
 
     try{
         const r=await fetch("/api/generate",{method:"POST",body:fd});
         const d=await r.json();
         if(!r.ok)throw new Error(d.error||"Failed to start");
+        if(d.seed)seedInput.value=d.seed;
         pollJob(d.job_id);
     }catch(e){
         showError(e.message);
@@ -178,8 +225,10 @@ function pollJob(jobId){
                 statusText.className="status-text loading";
             }
             statusText.textContent=msg;
-            if(d.shape_time){
-                let s='<span class="stat"><strong>Shape:</strong> '+d.shape_time+'s</span>';
+            if(d.shape_time||d.t2i_time){
+                let s="";
+                if(d.t2i_time)s+='<span class="stat"><strong>T2I:</strong> '+d.t2i_time+'s</span>';
+                if(d.shape_time)s+='<span class="stat"><strong>Shape:</strong> '+d.shape_time+'s</span>';
                 if(d.raw_faces)s+='<span class="stat"><strong>Raw:</strong> '+d.raw_faces.toLocaleString()+' faces</span>';
                 statsRow.innerHTML=s;
             }
@@ -190,9 +239,11 @@ function pollJob(jobId){
                 statusText.className="status-text success";
                 let s='<span class="stat"><strong>Faces:</strong> '+d.faces.toLocaleString()+'</span>';
                 s+='<span class="stat"><strong>Verts:</strong> '+d.vertices.toLocaleString()+'</span>';
+                if(d.t2i_time)s+='<span class="stat"><strong>T2I:</strong> '+d.t2i_time+'s</span>';
                 if(d.shape_time)s+='<span class="stat"><strong>Shape:</strong> '+d.shape_time+'s</span>';
                 if(d.texture_time)s+='<span class="stat"><strong>Texture:</strong> '+d.texture_time+'s</span>';
                 if(d.raw_faces&&d.raw_faces!==d.faces)s+='<span class="stat"><strong>Reduced:</strong> '+d.raw_faces.toLocaleString()+' &rarr; '+d.faces.toLocaleString()+'</span>';
+                if(d.seed!==undefined)s+='<span class="stat"><strong>Seed:</strong> '+d.seed+'</span>';
                 statsRow.innerHTML=s;
                 if(selectedFormat==="glb"){
                     const e=previewBody.querySelector("model-viewer");
