@@ -140,7 +140,7 @@ def clear_gpu():
         torch.cuda.ipc_collect()
         torch.cuda.synchronize()
 
-def run_generation(job_id,img_path,quality,export_format,enable_texture,target_faces,seed,prompt):
+def run_generation(job_id,img_path,quality,export_format,texture_mode,target_faces,seed,prompt):
     import torch
     from PIL import Image
 
@@ -160,10 +160,8 @@ def run_generation(job_id,img_path,quality,export_format,enable_texture,target_f
                 t2i_time=round(time.time()-t_t2i,1)
                 print(f"[{job_id}] Image generated in {t2i_time}s")
                 update_job(job_id,t2i_time=t2i_time,heartbeat=time.time())
-                # Save generated image for reference
                 image.save(str(UPLOAD_DIR/f"{job_id}_generated.png"))
             else:
-                # Load uploaded image
                 image=Image.open(str(img_path)).convert("RGBA")
 
             # Remove background
@@ -211,7 +209,39 @@ def run_generation(job_id,img_path,quality,export_format,enable_texture,target_f
 
             # Texture on the reduced mesh
             texture_time=None
-            if enable_texture and paint_pipeline:
+            if texture_mode=="project":
+                # Project input image directly onto mesh (fast, ~1-2s)
+                update_job(job_id,status="projecting_texture",heartbeat=time.time())
+                print(f"[{job_id}] Projecting input image onto mesh...")
+                clear_gpu()
+                t1=time.time()
+                try:
+                    from hy3dgen.texgen.utils.uv_warp_utils import mesh_uv_wrap
+                    mesh=mesh_uv_wrap(mesh)
+                    paint_pipeline.render.load_mesh(mesh)
+                    # Project from front view
+                    proj_tex,proj_cos,proj_boundary=paint_pipeline.render.back_project(image,elev=0,azim=0)
+                    # Project from back view too for coverage
+                    proj_tex2,proj_cos2,proj_boundary2=paint_pipeline.render.back_project(image,elev=0,azim=180)
+                    # Merge views
+                    texture,trust=paint_pipeline.render.fast_bake_texture(
+                        [proj_tex,proj_tex2],
+                        [proj_cos**4, (proj_cos2**4)*0.3])
+                    # Inpaint gaps
+                    import numpy as np
+                    mask_np=(trust.squeeze(-1).cpu().numpy()*255>1).astype(np.uint8)*255
+                    texture=paint_pipeline.texture_inpaint(texture,255-mask_np)
+                    paint_pipeline.render.set_texture(texture)
+                    mesh=paint_pipeline.render.save_mesh()
+                    texture_time=round(time.time()-t1,1)
+                    print(f"[{job_id}] Projection done in {texture_time}s")
+                    update_job(job_id,texture_time=texture_time,heartbeat=time.time())
+                except Exception as e:
+                    traceback.print_exc()
+                    update_job(job_id,status="error",error=f"Projection failed: {e}")
+                    return
+                clear_gpu()
+            elif texture_mode=="generate" and paint_pipeline:
                 update_job(job_id,status="generating_texture",heartbeat=time.time())
                 print(f"[{job_id}] Generating texture (render={preset['render_size']}, tex={preset['texture_size']})...")
                 clear_gpu()
@@ -227,7 +257,7 @@ def run_generation(job_id,img_path,quality,export_format,enable_texture,target_f
                 print(f"[{job_id}] Texture done in {texture_time}s")
                 update_job(job_id,texture_time=texture_time,heartbeat=time.time())
                 clear_gpu()
-            elif enable_texture:
+            elif texture_mode=="generate":
                 update_job(job_id,status="error",error="Texture model not loaded")
                 return
 
@@ -302,14 +332,14 @@ def generate():
 
     quality=request.form.get("quality","balanced")
     export_format=request.form.get("format","glb")
-    enable_texture=request.form.get("texture","false")=="true"
+    texture_mode=request.form.get("texture_mode","none")  # none, project, generate
     target_faces=int(request.form.get("faces","0"))
     seed_str=request.form.get("seed","").strip()
     seed=int(seed_str) if seed_str and seed_str!="-1" else random.randint(0,999999)
 
     job_id=str(uuid.uuid4())[:8]
     mode="text" if prompt else "image"
-    print(f"\n[{job_id}] mode={mode}, quality={quality}, format={export_format}, texture={enable_texture}, faces={target_faces}, seed={seed}")
+    print(f"\n[{job_id}] mode={mode}, quality={quality}, format={export_format}, texture={texture_mode}, faces={target_faces}, seed={seed}")
 
     img_path=None
     if has_image:
@@ -318,9 +348,9 @@ def generate():
         request.files["image"].save(str(img_path))
 
     write_job(job_id,{"status":"queued","quality":quality,"format":export_format,"mode":mode,
-                      "prompt":prompt,"seed":seed,
+                      "prompt":prompt,"seed":seed,"texture_mode":texture_mode,
                       "shape_time":None,"texture_time":None,"t2i_time":None,"error":None,"heartbeat":time.time()})
-    t=threading.Thread(target=run_generation,args=(job_id,img_path,quality,export_format,enable_texture,target_faces,seed,prompt),daemon=True)
+    t=threading.Thread(target=run_generation,args=(job_id,img_path,quality,export_format,texture_mode,target_faces,seed,prompt),daemon=True)
     t.start()
     return jsonify({"job_id":job_id,"seed":seed})
 @app.route("/api/job/<job_id>")

@@ -46,9 +46,11 @@
             <div class="format-btn" data-format="stl">.STL</div>
             <div class="format-btn" data-format="fbx">.FBX</div>
         </div>
-        <div class="toggle-row" id="textureRow">
-            <label>Generate Texture <span class="tag" id="textureTag">Loading...</span></label>
-            <div class="switch"><input type="checkbox" id="textureToggle"><span class="slider"></span></div>
+        <div class="section-title">Texture Mode</div>
+        <div class="quality-grid" id="textureModeGrid">
+            <div class="quality-btn active" data-texmode="none"><div class="name">None</div><div class="desc">Shape only</div></div>
+            <div class="quality-btn" data-texmode="project"><div class="name">Project</div><div class="desc">~2s direct</div></div>
+            <div class="quality-btn" data-texmode="generate" id="generateTexBtn"><div class="name">Generate</div><div class="desc">~30-60s AI</div></div>
         </div>
         <div class="range-row">
             <div class="range-label">
@@ -82,8 +84,8 @@
     <div class="history-grid" id="historyGrid"></div>
 </div>
 <script>
-let selectedFile=null,selectedQuality="balanced",selectedFormat="glb",isGenerating=false,inputMode="image";
-const dropZone=document.getElementById("dropZone"),imageInput=document.getElementById("imageInput"),generateBtn=document.getElementById("generateBtn"),downloadBtn=document.getElementById("downloadBtn"),textureToggle=document.getElementById("textureToggle"),errorBox=document.getElementById("errorBox"),statusBar=document.getElementById("statusBar"),statusText=document.getElementById("statusText"),statsRow=document.getElementById("statsRow"),progressBar=document.getElementById("progressBar"),previewBody=document.getElementById("previewBody"),placeholder=document.getElementById("placeholder"),gpuBadge=document.getElementById("gpuBadge"),textureTag=document.getElementById("textureTag"),facesSlider=document.getElementById("facesSlider"),facesValue=document.getElementById("facesValue"),promptInput=document.getElementById("promptInput"),seedInput=document.getElementById("seedInput"),imageArea=document.getElementById("imageArea"),textArea=document.getElementById("textArea"),textTab=document.getElementById("textTab");
+let selectedFile=null,selectedQuality="balanced",selectedFormat="glb",selectedTexMode="none",isGenerating=false,inputMode="image";
+const dropZone=document.getElementById("dropZone"),imageInput=document.getElementById("imageInput"),generateBtn=document.getElementById("generateBtn"),downloadBtn=document.getElementById("downloadBtn"),errorBox=document.getElementById("errorBox"),statusBar=document.getElementById("statusBar"),statusText=document.getElementById("statusText"),statsRow=document.getElementById("statsRow"),progressBar=document.getElementById("progressBar"),previewBody=document.getElementById("previewBody"),placeholder=document.getElementById("placeholder"),gpuBadge=document.getElementById("gpuBadge"),facesSlider=document.getElementById("facesSlider"),facesValue=document.getElementById("facesValue"),promptInput=document.getElementById("promptInput"),seedInput=document.getElementById("seedInput"),imageArea=document.getElementById("imageArea"),textArea=document.getElementById("textArea"),textTab=document.getElementById("textTab");
 
 function updateFacesLabel(){
     const v=parseInt(facesSlider.value);
@@ -117,16 +119,9 @@ fetch("/api/status").then(r=>r.json()).then(d=>{
     let badge=d.gpu+" ("+d.vram_gb+" GB)";
     if(d.flashvdm)badge+=" + FlashVDM";
     gpuBadge.innerHTML='<span class="dot" style="background:#2ecc71"></span>'+badge;
-    if(d.texture_ready){
-        textureTag.textContent="Available";
-        textureTag.style.background="rgba(46,204,113,.2)";
-        textureTag.style.color="#2ecc71";
-        textureToggle.checked=true;
-    }else{
-        textureTag.textContent="16GB+ VRAM needed";
-        textureTag.style.background="rgba(243,156,18,.2)";
-        textureTag.style.color="#f39c12";
-        textureToggle.checked=false;
+    if(!d.texture_ready){
+        const gb=document.getElementById("generateTexBtn");
+        if(gb){gb.style.opacity="0.4";gb.style.pointerEvents="none";gb.title="Texture model not loaded";}
     }
     if(!d.t2i_ready){
         textTab.style.opacity="0.4";
@@ -158,7 +153,7 @@ function setImage(f){
 
 document.querySelectorAll(".quality-btn").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".quality-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedQuality=b.dataset.quality})});
 document.querySelectorAll(".format-btn").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".format-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedFormat=b.dataset.format})});
-document.getElementById("textureRow").addEventListener("click",()=>{textureToggle.checked=!textureToggle.checked});
+document.querySelectorAll("[data-texmode]").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll("[data-texmode]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedTexMode=b.dataset.texmode})});
 
 const STATUS_MESSAGES={
     "queued":"Starting generation...",
@@ -167,6 +162,7 @@ const STATUS_MESSAGES={
     "generating_shape":"Generating 3D shape...",
     "cleaning_mesh":"Cleaning mesh...",
     "reducing_faces":"Reducing face count...",
+    "projecting_texture":"Projecting texture...",
     "generating_texture":"Generating texture...",
     "exporting":"Exporting model...",
     "done":"Done!",
@@ -195,7 +191,7 @@ generateBtn.addEventListener("click",async()=>{
     if(inputMode==="text") fd.append("prompt",promptInput.value.trim());
     fd.append("quality",selectedQuality);
     fd.append("format",selectedFormat);
-    fd.append("texture",textureToggle.checked?"true":"false");
+    fd.append("texture_mode",selectedTexMode);
     fd.append("faces",facesSlider.value);
     fd.append("seed",seedInput.value);
 
