@@ -321,6 +321,17 @@ def job_status(job_id):
     hb=data.get("heartbeat",0)
     data["stale"]=data.get("status") not in ("done","error") and time.time()-hb>120
     return jsonify(data)
+@app.route("/api/history")
+def history():
+    jobs=[]
+    for p in sorted(JOBS_DIR.glob("*.json"),key=lambda x:x.stat().st_mtime,reverse=True):
+        try:
+            data=json.loads(p.read_text())
+            if data.get("status")=="done":
+                data["job_id"]=p.stem
+                jobs.append(data)
+        except:pass
+    return jsonify(jobs[:50])
 @app.route("/api/generated-image/<job_id>")
 def generated_image(job_id):
     path=UPLOAD_DIR/f"{job_id}_generated.png"
