@@ -225,6 +225,14 @@ function pollJob(jobId){
                 statusText.className="status-text loading";
             }
             statusText.textContent=msg;
+            if(d.t2i_time&&!document.getElementById("genImg")){
+                const img=document.createElement("img");
+                img.id="genImg";
+                img.src="/api/generated-image/"+jobId;
+                img.style.cssText="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px";
+                placeholder.style.display="none";
+                previewBody.appendChild(img);
+            }
             if(d.shape_time||d.t2i_time){
                 let s="";
                 if(d.t2i_time)s+='<span class="stat"><strong>T2I:</strong> '+d.t2i_time+'s</span>';
@@ -248,6 +256,8 @@ function pollJob(jobId){
                 if(selectedFormat==="glb"){
                     const e=previewBody.querySelector("model-viewer");
                     if(e)e.remove();
+                    const gi=document.getElementById("genImg");
+                    if(gi)gi.remove();
                     placeholder.style.display="none";
                     const v=document.createElement("model-viewer");
                     v.setAttribute("src","/api/preview/"+d.file);

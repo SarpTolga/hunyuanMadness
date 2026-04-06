@@ -321,6 +321,11 @@ def job_status(job_id):
     hb=data.get("heartbeat",0)
     data["stale"]=data.get("status") not in ("done","error") and time.time()-hb>120
     return jsonify(data)
+@app.route("/api/generated-image/<job_id>")
+def generated_image(job_id):
+    path=UPLOAD_DIR/f"{job_id}_generated.png"
+    if not path.exists():return jsonify({"error":"Not found"}),404
+    return send_file(str(path))
 @app.route("/api/download/<filename>")
 def download(filename):
     path=OUTPUT_DIR/secure_filename(filename)
