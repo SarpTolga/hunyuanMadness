@@ -49,18 +49,9 @@ echo "[5/7] Building texture components..."
 cd hy3dgen/texgen/custom_rasterizer && python setup.py install && cd ../../..
 cd hy3dgen/texgen/differentiable_renderer && python setup.py install && cd ../../..
 
-# Step 4: Patch texture pipeline for speed (Unity game mode)
+# Step 4: Create directories & download app files
 echo ""
-echo "[6/8] Patching texture pipeline for speed..."
-# Light removal: 50 steps -> 25 steps (good balance of speed/quality)
-sed -i 's/num_inference_steps=50/num_inference_steps=25/' hy3dgen/texgen/utils/dehighlight_utils.py
-# Multiview diffusion: 30 steps -> 20 steps (good balance of speed/quality)
-sed -i 's/num_inference_steps=30/num_inference_steps=20/' hy3dgen/texgen/utils/multiview_utils.py
-echo "    Patched: delight 50->25 steps, multiview 30->20 steps"
-
-# Step 5: Create directories & download app files
-echo ""
-echo "[7/8] Downloading app files..."
+echo "[6/7] Downloading app files..."
 mkdir -p outputs uploads static jobs
 echo "    Downloading from GitHub..."
 curl -sL https://raw.githubusercontent.com/SarpTolga/hunyuanMadness/main/cloud_app.py -o app.py
@@ -70,7 +61,7 @@ echo "    index.html: $(wc -c < static/index.html) bytes"
 
 # Step 5: Fix Caddy proxy
 echo ""
-echo "[8/8] Configuring Caddy proxy..."
+echo "[7/7] Configuring Caddy proxy..."
 sed -i 's/localhost:18384/localhost:3333/g' /etc/Caddyfile && caddy reload --config /etc/Caddyfile
 
 echo ""

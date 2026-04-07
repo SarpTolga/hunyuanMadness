@@ -35,8 +35,8 @@ QUALITY_PRESETS={
         "guidance_scale":7.5,
         "num_chunks":20000,
         "max_faces":30000,
-        "texture_size":1024,
-        "render_size":1024,
+        "texture_size":2048,
+        "render_size":2048,
     },
     "ultra":{
         "steps":50,
@@ -44,8 +44,8 @@ QUALITY_PRESETS={
         "guidance_scale":7.5,
         "num_chunks":20000,
         "max_faces":50000,
-        "texture_size":1024,
-        "render_size":1024,
+        "texture_size":2048,
+        "render_size":2048,
     },
 }
 
