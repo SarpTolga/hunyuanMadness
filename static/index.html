@@ -151,7 +151,7 @@ function setImage(f){
     errorBox.classList.remove("visible");
 }
 
-document.querySelectorAll(".quality-btn").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".quality-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedQuality=b.dataset.quality})});
+document.querySelectorAll("[data-quality]").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll("[data-quality]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedQuality=b.dataset.quality;if(!document.querySelector("[data-texmode].active")||selectedTexMode==="none"){document.querySelectorAll("[data-texmode]").forEach(x=>x.classList.remove("active"));let gt=document.querySelector("[data-texmode='generate']");if(gt&&!gt.style.pointerEvents){gt.classList.add("active");selectedTexMode="generate"}else{let pt=document.querySelector("[data-texmode='project']");if(pt){pt.classList.add("active");selectedTexMode="project"}}}})});
 document.querySelectorAll(".format-btn").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".format-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedFormat=b.dataset.format})});
 document.querySelectorAll("[data-texmode]").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll("[data-texmode]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedTexMode=b.dataset.texmode})});
 
