@@ -169,6 +169,15 @@ def run_generation(job_id,img_path,quality,export_format,texture_mode,target_fac
             print(f"[{job_id}] Removing background...")
             image=rembg_worker(image.convert("RGB"))
 
+            # Clean alpha: kill semi-transparent pixels that cause black artifacts
+            import numpy as np
+            img_arr=np.array(image)
+            alpha=img_arr[:,:,3]
+            alpha=np.where(alpha<128,0,255).astype(np.uint8)
+            img_arr[:,:,3]=alpha
+            img_arr[alpha==0,:3]=255  # white background for transparent areas
+            image=Image.fromarray(img_arr)
+
             # Generate shape
             update_job(job_id,status="generating_shape",heartbeat=time.time())
             print(f"[{job_id}] Generating shape ({quality}, {preset['steps']} steps, res={preset['octree_resolution']}, seed={seed})...")
